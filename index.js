@@ -19,4 +19,66 @@ let allWagesFor = function () {
     }.bind(this), 0) // <== Hm, why did we need to add bind() there? We'll discuss soon!
 
     return payable
-}
+};
+
+const createEmployeeRecord = function(array) {
+    return {
+        firstName: array[0],
+        familyName: array[1],
+        title: array[2],
+        payPerHour: array[3],
+        timeInEvents: [],
+        timeOutEvents: []
+    };
+};
+
+const createEmployeeRecords = function (array) {
+    return array.map(record => createEmployeeRecord(record))
+};
+
+const createTimeInEvent = function(dateStamp) {
+    const dateArray = dateStamp.split(' ');
+    const event = {
+        type: 'TimeIn',
+        hour: parseInt(dateArray[1]),
+        date: dateArray[0]
+    };
+    // this is the record. The call would look like record.createTimeInEvent(datestamp)
+    this.timeInEvents.push(event);
+    return this
+};
+
+const createTimeOutEvent = function(dateStamp) {
+    const dateArray = dateStamp.split(' ');
+    const event = {
+        type: 'TimeOut',
+        hour: parseInt(dateArray[1]),
+        date: dateArray[0]
+    };
+    // this is the record. The call would look like record.createTimeOutEvent(datestamp)
+    this.timeOutEvents.push(event);
+    return this
+};
+
+const hoursWorkedOnDate = function(date) {
+  const timeIn = this.timeInEvents.find(e => e.date === date);
+  const timeOut = this.timeOutEvents.find(e => e.date === date);
+  return (timeOut.hour - timeIn.hour) / 100;
+};
+
+const wagesEarnedOnDate = function(date) {
+  const hours = hoursWorkedOnDate.call(this, date);
+  const rate = this.payPerHour;
+  return hours * rate
+};
+
+const calculatePayroll = function(records) {
+    const payroll = records.map(r => allWagesFor.call(r));
+    return payroll.reduce(
+        (accumulator, currentValue) => accumulator + currentValue, 0
+    );
+};
+
+const findEmployeeByFirstName = function(records, firstName) {
+    return records.find(r => r.firstName === firstName);
+};
