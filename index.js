@@ -20,3 +20,73 @@ let allWagesFor = function () {
 
     return payable
 }
+
+let createEmployeeRecord = function(row) {
+    return {
+        firstName: row[0],
+        familyName: row[1],
+        title: row[2],
+        payPerHour: row[3],
+        timeInEvents: [],
+        timeOutEvents: [],
+    }
+}
+
+let createEmployeeRecords = function(employeeData) {
+    return employeeData.map(function(row) {
+        return createEmployeeRecord(row)
+    })
+}
+
+let createTimeInEvent = function(timeStamp) {
+    let[date, hour] = timeStamp.split(' ')
+    this.timeInEvents.push({
+        type: "TimeIn",
+        hour: parseInt(hour, 10),
+        date,
+
+    })
+    return this
+}
+
+let createTimeOutEvent = function(timeStamp) {
+    let[date, hour] = timeStamp.split(' ')
+    this.timeOutEvents.push({
+        type: "TimeOut",
+        hour: parseInt(hour, 10),
+        date,
+    })
+    return this
+}
+
+let wagesEarnedOnDate = function(date){
+    let wage = hoursWorkedOnDate.call(this, date)
+        * this.payPerHour
+        return parseFloat(wage.toString())
+}
+
+let hoursWorkedOnDate = function(date) {
+    let timeIn = this.timeInEvents.find(function(event) {
+        return event.date === date
+    })
+
+    let timeOut = this.timeOutEvents.find(function(event) {
+        return event.date === date
+    })
+
+    return (timeOut.hour - timeIn.hour) / 100
+}
+
+let findEmployeeByFirstName = function(array, firstName) {
+    return array.find(function(record) {
+        return record.firstName === firstName
+    })
+}
+
+
+let calculatePayroll = function(arrayRecords) {
+    return arrayRecords.reduce(function(memo, record) {
+        return memo + allWagesFor.call(record)
+    }, 0)
+}
+
